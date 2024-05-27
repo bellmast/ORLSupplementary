@@ -1,0 +1,264 @@
+\def\year{2020}\relax
+%File: formatting-instruction.tex
+\documentclass[letterpaper]{article} % DO NOT CHANGE THIS
+\usepackage{aaai20}  % DO NOT CHANGE THIS
+\usepackage{times}  % DO NOT CHANGE THIS
+\usepackage{helvet} % DO NOT CHANGE THIS
+\usepackage{courier}  % DO NOT CHANGE THIS
+\usepackage[hyphens]{url}  % DO NOT CHANGE THIS
+\usepackage{graphicx} % DO NOT CHANGE THIS
+\urlstyle{rm} % DO NOT CHANGE THIS
+\def\UrlFont{\rm}  % DO NOT CHANGE THIS
+\usepackage{graphicx}  % DO NOT CHANGE THIS
+\frenchspacing  % DO NOT CHANGE THIS
+\setlength{\pdfpagewidth}{8.5in}  % DO NOT CHANGE THIS
+\setlength{\pdfpageheight}{11in}  % DO NOT CHANGE THIS
+
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{mathabx}
+\usepackage{amsfonts} 
+\usepackage{bbm}
+\usepackage{multirow}
+\usepackage{appendix}
+
+\newcommand{\citet}[1]{\citeauthor{#1}~\shortcite{#1}}
+
+\usepackage{array,tabularx}
+\newenvironment{vardefs*}{\par\vspace{\abovedisplayskip}\noindent
+	\tabularx{\columnwidth}{>{$}l<{$} @{${}:{}$} >{\raggedright\arraybackslash}X}}
+{\endtabularx\par\vspace{\belowdisplayskip}}
+
+
+%\nocopyright
+%PDF Info Is REQUIRED.
+% For /Author, add all authors within the parentheses, separated by commas. No accents or commands.
+% For /Title, add Title in Mixed Case. No accents or commands. Retain the parentheses.
+ \pdfinfo{
+/Title (Supplementary Material -- ORL: Reinforcement Learning Benchmarks for Online Stochastic Optimization Problems)
+/Author (Anonymous Authors)
+} %Leave this	
+% /Title ()
+% Put your actual complete title (no codes, scripts, shortcuts, or LaTeX commands) within the parentheses in mixed case
+% Leave the space between \Title and the beginning parenthesis alone
+% /Author ()
+% Put your actual complete list of authors (no codes, scripts, shortcuts, or LaTeX commands) within the parentheses in mixed case. 
+% Each author should be only by a comma. If the name contains accents, remove them. If there are any LaTeX commands, 
+% remove them. 
+
+% DISALLOWED PACKAGES
+% \usepackage{authblk} -- This package is specifically forbidden
+% \usepackage{balance} -- This package is specifically forbidden
+% \usepackage{caption} -- This package is specifically forbidden
+% \usepackage{color (if used in text)
+% \usepackage{CJK} -- This package is specifically forbidden
+% \usepackage{float} -- This package is specifically forbidden
+% \usepackage{flushend} -- This package is specifically forbidden
+% \usepackage{fontenc} -- This package is specifically forbidden
+% \usepackage{fullpage} -- This package is specifically forbidden
+% \usepackage{geometry} -- This package is specifically forbidden
+% \usepackage{grffile} -- This package is specifically forbidden
+% \usepackage{hyperref} -- This package is specifically forbidden
+% \usepackage{navigator} -- This package is specifically forbidden
+% (or any other package that embeds links such as navigator or hyperref)
+% \indentfirst} -- This package is specifically forbidden
+% \layout} -- This package is specifically forbidden
+% \multicol} -- This package is specifically forbidden
+% \nameref} -- This package is specifically forbidden
+% \natbib} -- This package is specifically forbidden -- use the following workaround:
+% \usepackage{savetrees} -- This package is specifically forbidden
+% \usepackage{setspace} -- This package is specifically forbidden
+% \usepackage{stfloats} -- This package is specifically forbidden
+% \usepackage{tabu} -- This package is specifically forbidden
+% \usepackage{titlesec} -- This package is specifically forbidden
+% \usepackage{tocbibind} -- This package is specifically forbidden
+% \usepackage{ulem} -- This package is specifically forbidden
+% \usepackage{wrapfig} -- This package is specifically forbidden
+% DISALLOWED COMMANDS
+% \nocopyright -- Your paper will not be published if you use this command
+% \addtolength -- This command may not be used
+% \balance -- This command may not be used
+% \baselinestretch -- Your paper will not be published if you use this command
+% \clearpage -- No page breaks of any kind may be used for the final version of your paper
+% \columnsep -- This command may not be used
+% \newpage -- No page breaks of any kind may be used for the final version of your paper
+% \pagebreak -- No page breaks of any kind may be used for the final version of your paperr
+% \pagestyle -- This command may not be used
+% \tiny -- This is not an acceptable font size.
+% \vspace{- -- No negative value may be used in proximity of a caption, figure, table, section, subsection, subsubsection, or reference
+% \vskip{- -- No negative value may be used to alter spacing above or below a caption, figure, table, section, subsection, subsubsection, or reference
+
+\setcounter{secnumdepth}{2} %May be changed to 1 or 2 if section numbers are desired.
+
+% The file aaai20.sty is the style file for AAAI Press 
+% proceedings, working notes, and technical reports.
+%
+\setlength\titlebox{2.5in} % If your paper contains an overfull \vbox too high warning at the beginning of the document, use this
+% command to correct it. You may not alter the value below 2.5 in
+\title{ORL: Reinforcement Learning Benchmarks for Online Stochastic Optimization Problems -- Supplementary Material}
+%Your title must be in mixed case, not sentence case. 
+% That means all verbs (including short verbs like be, is, using,and go), 
+% nouns, adverbs, adjectives should be capitalized, including both words in hyphenated terms, while
+% articles, conjunctions, and prepositions are lower case unless they
+% directly follow a colon or long dash
+\author{Anonymous Authors}
+
+\begin{document}
+	
+\maketitle
+
+	\section{Bin Packing - HyperParameters}
+\label{appendix:bin_size_hp}
+\begin{table}[h!]
+	\resizebox{\columnwidth}{!}
+	{
+		\centering
+		\begin{tabular}{ |c|c|c|c| } 
+			\hline
+			Discount factor & 0.995 & KL coefficient & 1.0 \\
+			\hline
+			Experience Buffer & 320000 & Learning rate & 0.0001 \\
+			\hline	
+			SGD Mini-batch & 32768 & Epochs & 10 \\
+			\hline
+			Entropy coefficient & 0 & \# Workers & 31 \\
+			\hline
+			Episode length & 10000 & clip param & 0.3 \\
+			\hline
+		\end{tabular}
+	}
+	\caption{Hyperparameters used in PPO for Bin Packing}
+	\label{table:bin_packing_hyperparam}
+	\vspace{-1em}
+\end{table}
+
+\section{Bin Packing Results - Bin Size of 9}
+\label{appendix:bin_size_9}
+
+\begin{table}[!htbp]
+	%	\resizebox{\columnwidth}{!}
+	\centering
+	\begin{tabular}{|c|cc|cc|cc|}
+		\hline
+		\multicolumn{1}{|l|}{\multirow{2}{*}{Algorithm}}  & \multicolumn{2}{c|}{Perfect Pack} & \multicolumn{2}{c|}{Bounded Waste}	& \multicolumn{2}{c|}{Linear Waste} \\
+		\multicolumn{1}{|l|}{} 											&   $\mu$            &        $\sigma$		& 	$\mu$    			& 	$\sigma$     		 &     $\mu$        &      $\sigma$          \\ \hline
+		RL with PP  										  			   &  -39.4     		   &          15.1        	&  	-29.0 	  			  &   5.7	 				 &     -106.8       &      70.8     \\ \hline
+		RL with BW  									  				  & -57K     		   &          24K        &  	-5.06 	  			  &   2.77	 				 &     -79K       &      8.5K     \\ \hline
+		RL with LW 										 				  &  -47.1     		  &         7.7               &  	-41.3	  			&   11.8	 			   &     -71.8      &      10     \\ \hline
+		SS  											   						&  -50.2     	    &         28.6           &    -17.27 	  			&   3.21	 			   &     -212.2      &      68.7     \\ \hline
+		Best Fit  															  &  -123.7     	   &          8.3           &  	-127.49 	  			&   9.6	 			   &     -130.6     &      7.7     \\ \hline
+	\end{tabular}
+	\caption{RL and baseline solution comparison for bin packing with bin size of 9 and 1000 items. Mean and standard deviations are calculated across 100 episodes. Note that RL policy trained with BW distribution does not generalize well to PP and LW distribution, giving very negative rewards. Also note that SS outperforms BF for the bin size 9 test case compared to bin size 100.}
+	\label{table:bin_size_9_RL_baseline_comp}
+	%	\vspace{-1em}
+\end{table}
+
+\section{Newsvendor - HyperParameters}
+\label{appendix:newsvendor_hp}
+
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{ |c|c| }
+		\hline
+		Learning rate & 0.0001\\
+		\hline
+		SGD Mini-Batch Size & 32768\\
+		\hline
+		Train Batch Size & 320000\\
+		\hline
+		Episode length & 40\\
+		\hline
+		\hline
+	\end{tabular}
+	\caption{Hyperparameters used in PPO for Newsvendor}
+	\label{table:newsvendor_hyperparam}
+	\vspace{-1em}
+\end{table}
+
+\clearpage
+\section{VRP baseline MIP formulation}
+\label{appendix:vrp_mip}
+
+\subsubsection*{Sets}
+\begin{vardefs*}
+	V & Current vehicle location, $V=\{0\}$ \\
+	P & Pickup nodes (copies of the restaurant nodes, associated with the orders that are not in transit)  \\
+	D & Delivery nodes representing the orders that are not in transit, $D = \{j | j= i + n, i \in P, n=|P| \}$  \\
+	A & Nodes representing the orders that are accepted by the driver; $A \subset D$ \\
+	T & Delivery nodes representing the orders that are in transit  \\
+	R & Nodes representing the restaurants, used for final return) \\
+	N & Set of all nodes in the graph, $N = V \cup P \cup D  \cup T \cup R $\\
+	E & Set of all edges, $E=\{(i, j),  \forall i, j \in N\}$
+\end{vardefs*}
+
+
+\subsubsection*{Decision variables}
+\begin{vardefs*}
+	x_{ij} & Binary variable, 1 if the vehicle uses the arc from node $i$ to $j$, 0 otherwise; $i, j \in N$ \\
+	y_{i}  & Binary variable, 1 if the order $i$ is accepted, 0 otherwise; $i \in P$\\
+	Q_{i} & Auxiliary variable to track the capacity usage as of node  $i$; $i \in N$ \\ 
+	B_{i} & Auxiliary variable to track the time as of node  $i$; $i \in N$
+\end{vardefs*}
+
+\subsubsection*{Parameters}
+\begin{vardefs*}
+	n & Number of orders available to pick up, $n = |P|$ \\ 
+	c_{ij} & Symmetric Manhattan distance (in miles) matrix between node $i$ and $j$, $(i, j) \in E$ \\
+	q_i & Supply (demand) at node $i$, $q_0 = |T|; q_i = 1, \forall i \in P;  q_i = -1, \forall i \in D \cup T; q_i = 0 \in R$  \\ 
+	l_i & Remaining time to deliver order $i$, $i \in D \cup T$ \\ 
+	m & Travel cost per mile \\
+	r_i & Revenue for order associated with pick up node $i$, $i \in P$  \\
+	U & Vehicle capacity  \\
+	M & A very big number  \\ 
+	t & Time to travel one mile  \\
+	d & A constant positive service time spent on accept, pickup, delivery
+\end{vardefs*}
+
+\subsubsection*{Model}
+\begin{equation}
+\begin{array}{rrclcl}
+& \max_{x, y, Q, B} & \multicolumn{3}{l}{ \sum_{i \in P} r_i y_i - m \sum_{(i,j) \in E} c_{ij} x_{ij}  } \\  
+& \textrm{s.t.} \qquad  \sum_{j \in N} x_{ij}   &=& y_i & \forall i \in P \\   %leave
+& \sum_{j \in N} x_{ij} - \sum_{j \in N} x_{i+n,j}  & = & 0 & \forall i \in P  \\     %pickup
+& y_i & =& 1 & \forall i \in A \\  % accepted
+& \sum_{j \in N} x_{ij}   &=& 1 & \forall i \in V \cup T \\  % start and  in-transit
+& \sum_{i \in N \setminus R } \sum_{j \in R }  x_{ij}   &=& 1  &\\     %end 
+& \sum_{j \in N \setminus R } x_{ji} - \sum_{j \in N} x_{ij}  & = & 0 & \forall i \in P \cup D \cup T  \\     %flow
+& Q_i + q_j - M (1-x_{ij} ) &\leq& Q_j & \forall i,j \in N \\  %captrack
+& \max{(0, q_i)}    &\leq& Q_i & \forall i \in N \\  %cap_lb
+& \min{(U, U+q_i)}    &\geq& Q_i & \forall i \in N \\  %cap_ub
+& B_i + d + c_{ij} t -  M (1-x_{ij} )  &\leq& B_j   & \forall i,j \in N \\  %time_track , *\mathcal{1}\{ i \notin V  \}
+& B_i +  c_{i, i+n} t -  M (1- y_i )  &\leq& B_{i+n}  & \forall i \in P \\ %precedence
+&  d \sum_{i \in P \setminus A}  y_i  & = & B_0  \\ %timetoaccept
+& B_i  &\leq& l_i  & \forall i \in D \cup T \\ %precedence
+& x_{ij}, y_i &\in& \{0, 1\} & \forall i,j \in N  \\ 
+\end{array}
+\end{equation}
+
+\clearpage
+
+\section{Vehicle Routing Problem - HyperParameters}
+\label{appendix:vrp_hp}
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{ |c|c|c|c| } 
+		\hline
+		Replay buffer alpha & 0.5 & \# steps for Q & 3 \\ 
+		\hline
+		Replay buffer eps & 0.1 & Learning rate & 1e-3 \\
+		\hline	
+		Final explore eps & 0.01 & Adam epsilon & 1.5e-4 \\
+		\hline
+		Replay buffer size & 1e6 & \# Workers & 7 \\
+		\hline
+		Episode length & 1000 &  Training Batch & 512 \\
+		\hline
+	\end{tabular}
+	\caption{Hyperparameters used in APEX-DQN for VRP, taken directly from the atari APEX example provided in RLLib. No hand-tuning was performed.}
+	\label{table:vrp_hyperparam}
+	\vspace{-1em}
+\end{table}
+
+\end{document}

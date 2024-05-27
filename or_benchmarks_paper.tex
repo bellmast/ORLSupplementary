@@ -1,0 +1,171 @@
+\documentclass{article}
+
+% if you need to pass options to natbib, use, e.g.:
+% \PassOptionsToPackage{numbers, compress}{natbib}
+% before loading nips_2017
+%
+% to avoid loading the natbib package, add option nonatbib:
+% \usepackage[nonatbib]{nips_2017}
+
+%\usepackage{icml2019}
+\usepackage[accepted]{icml2019}
+
+% to compile a camera-ready version, add the [final] option, e.g.:
+% \usepackage[final]{nips_2017}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+%\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{mathabx}
+\usepackage{optidef}
+\usepackage{xcolor}
+\usepackage{multirow}
+\usepackage{bbm}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{enumitem}
+
+\usepackage{appendix}
+%\usepackage{etoolbox}
+% Inserts \clearpage before every \section within appendices environment
+%\AtBeginEnvironment{appendices}{\pretocmd{\section}{\clearpage}{}{}}{}
+
+% Attempt to make hyperref and algorithmic work together better:
+\newcommand{\theHalgorithm}{\arabic{algorithm}}
+
+\usepackage{array,tabularx}
+\newenvironment{vardefs*}{\par\vspace{\abovedisplayskip}\noindent
+	\tabularx{\columnwidth}{>{$}l<{$} @{${}:{}$} >{\raggedright\arraybackslash}X}}
+{\endtabularx\par\vspace{\belowdisplayskip}}
+
+\everymath{\displaystyle} 
+
+\icmltitlerunning{ORL: Reinforcement Learning Benchmarks for Online Stochastic Optimization Problems}
+%s\title{Benchmarks for Online Stochastic Operations Research Problems}
+
+\begin{document}
+
+\twocolumn[
+\icmltitle{ORL: Reinforcement Learning Benchmarks for Online Stochastic Optimization Problems}
+
+% It is OKAY to include author information, even for blind
+% submissions: the style file will automatically remove it for you
+% unless you've provided the [accepted] option to the icml2019
+% package.
+
+% List of affiliations: The first argument should be a (short)
+% identifier you will use later to specify author affiliations
+% Academic affiliations should list Department, University, City, Region, Country
+% Industry affiliations should list Company, City, Region, Country
+
+% You can specify symbols, otherwise they are numbered in order.
+% Ideally, you should not use this facility. Affiliations will be numbered
+% in order of appearance and this is the preferred way.
+\icmlsetsymbol{equal}{}
+
+\begin{icmlauthorlist}
+	\icmlauthor{Bharathan Balaji}{equal,to}
+	\icmlauthor{Jordan Bell-Masterson}{equal,to}
+	\icmlauthor{Enes Bilgin}{equal,to}
+	\icmlauthor{Andreas Damianou}{equal,to}
+	\icmlauthor{Pablo Moreno Garcia}{equal,to}
+	\icmlauthor{Arpit Jain}{equal,to}
+	\icmlauthor{Runfei Luo}{equal,to}
+	\icmlauthor{Alvaro Maggiar}{equal,to}
+	\icmlauthor{Balakrishnan Narayanaswamy}{equal,to}
+	\icmlauthor{Chun Ye}{equal,to}
+	%Others please add your names
+\end{icmlauthorlist}
+
+\icmlaffiliation{to}{Amazon.com, Inc.}
+%\icmlaffiliation{goo}{SCOT SimEx}
+%\icmlaffiliation{ed}{GDS MOP}
+
+\icmlcorrespondingauthor{Bharathan Balaji}{bhabalaj@amazon.com}
+
+% You may provide any keywords that you
+% find helpful for describing your paper; these are used to populate
+% the "keywords" metadata in the PDF but will not be shown in the document
+\icmlkeywords{reinforcement learning, benchmarks, operations research, online stochastic optimization, bin packing, vehicle routing, newsvendor}
+
+\vskip 0.3in
+]
+
+\setlength{\abovedisplayskip}{3pt}
+\setlength{\belowdisplayskip}{3pt}
+
+\printAffiliationsAndNotice{}  % leave blank if no need to mention equal contribution
+%\printAffiliationsAndNotice{\icmlEqualContribution} % otherwise use the standard text.
+
+
+%\maketitles
+	
+\begin{abstract}
+ Reinforcement Learning (RL) has achieved state-of-the-art performance in domains such as robotics and games.  We build on this previous work by applying RL algorithms to a selection of canonical online stochastic optimization problems with a range of practical applications: Bin Packing, Newsvendor, and Vehicle Routing.  While there is a nascent literature that applies RL to these problems, there are no commonly accepted benchmarks which can be used to compare proposed approaches rigorously in terms of performance, scale, or generalizability. This paper aims to fill that gap.  For each problem, we apply both well-known approaches and newer RL algorithms and analyze results.  In each case, the performance of the trained RL policy is competitive with or superior to the corresponding baselines, pointing the way for future research on applying RL to real-world online stochastic optimization problems and algorithmic improvements. 
+% The domain of Operations Research (OR) is particularly amenable to RL approaches since many of the canonical problems can be characterized as online stochastic optimization problems where the distribution of data is unknown.  
+% Canonical online stochastic optimization (OSO) problems in Operations Research (OR) are particularly amenable to RL approaches, especially where the distribution of data is unknown. 
+%While there is a nascent literature that applies RL to these problems, there are no commonly accepted benchmarks which can be used to compare proposed approaches rigorously in terms of performance, scale, or generalizability. This paper aims to fill that gap by introducing open source %OR+RL  benchmarks for three canonical OSO problems with a wide range of practical applications: Bin Packing, Newsvendor, and Vehicle Routing. We apply both well-known approaches and newer RL algorithms to these problems and analyze results.  For each problem, the performance of trained RL policy is competitive with or superior to the corresponding baselines, pointing the way for future research on applying RL to real world OSO problems and algorithmic improvements.
+\end{abstract}
+
+\section{Introduction}
+
+Reinforcement learning (RL) has gained steam in recent years with state of the art results in gaming~\cite{mnih2013playing,silver2017mastering}, robotics~\cite{hwangbo2019learning,andrychowicz2018learning}, computing~\cite{mao2017neural, marcus2018towards,mirhoseini2017device}, recommendation systems~\cite{chen2019top,zhao2018deep}, and many others. In RL, an agent interacts with an environment in a Markov Decision Process (MDP). The agent takes actions with the environment state as input and receives a scalar reward and the next state. RL algorithms learn a policy that maximizes the cumulative discounted reward from repeated interactions with the environment. Classic RL algorithms, such as Q-learning~\cite{watkins1992q}, require visitation to every discrete state, action pair for convergence. However, with the use of neural networks, RL can learn compact state representations and successful policies for high-dimensional state spaces~\cite{riedmiller2005neural,mnih2013playing}. With enough interactions, state-of-the-art RL algorithms can learn to make intelligent decisions that even beat human strategies~\cite{silver2017mastering}.
+
+%Challenging problems in operations research fall into one of two categories: 1) large scale combinatorial optimization problems, where computing an optimal solution requires clever enumeration through a large discrete set. 2) multi-period stochastic optimization problems, where the problem state space increases exponentially with the length of the time horizon. 
+%Many recent works have shown promising results applying RL to optimization problems. 
+Our work relates to the growing literature of applying RL to optimization problems. \citet{bello2016neural} show RL techniques produce near optimal solutions for the traveling salesman (TSP) and knapsack problems. \citet{kool2018attention} use RL to solve TSP and its variants: vehicle routing, orienteering, and a stochastic variant of prize-collecting TSP. \citet{nazari2018reinforcement} solve both static and online versions of the vehicle routing problem. \citet{gijsbrechts2018can} apply RL to the dual sourcing inventory replenishment problem, and further demonstrate results on a real dataset. \citet{kong2018new} apply RL to online versions of the knapsack, secretary and adwords problems. \citet{oroojlooyjadid2017deep} apply RL to the beer game problem. \citet{lin2018efficient} use RL for fleet management of taxis on a real life dataset. 
+%These works show that RL can get close to known optimal solutions for static versions of the problems. 
+
+%State-of-the-art OR solutions are often near optimal for static versions of these problems. For online stochastic versions of these problems, however, OR approaches often make assumptions on input distributions or convexity of the problem in their formulation. The RL approach can learn the distribution based on data and make end-to-end optimization decisions that maximize the long term objective. Early results in literature are promising, but there exist no benchmarks for the online stochastic optimization problems to rigorously compare algorithms in terms of performance, scale, generalizability and, in case of RL, training time. 
+
+Our contribution is to extend the existing RL literature to a set of online stochastic optimization problems with parallels to real-world problems. In particular, we present benchmarks for three classic problems: Bin Packing, Newsvendor and Vehicle Routing.  In each case, we show that trained policies from out-of-the-box RL algorithms with simple 2 layer neural networks and default hyper-parameters are competitive with or superior to established approaches to these problems. 
+We aim to spur further work in two directions.  First, we open source our code and parameterize the complexity of the problems in order to encourage fair comparisons of algorithmic contributions.  Each environment is implemented with OpenAI Gym interface~\cite{brockman2016openai} and integrated with RLlib~\cite{liang2017rllib} library so researchers can easily test multiple algorithms and tune hyper-parameters. %Second, we highlight the close parallels between these problem formulations and a host of practical problems, showing how further research can directly impact production scenarios.
+Second, since RL learns from exploratory actions, future work can focus on building effective simulators and learning from historical data to apply RL in real world scenarios.
+%Each problem has been implemented with a standard OpenAI Gym interface and parameterized so we can change the complexity of the problem. We have implemented well known baselines solutions and compare them with the performance of RL algorithms. We will open source our code for reproducibility and development of better algorithms by the community.
+
+% RL is a good fit
+%% learns the distribution
+%% end to end approach
+% OR papers with RL
+% online stochastic problems are harder than NP hard
+% No benchmarks
+
+%Operations Research is an awesome field. Many online stochastic problems exist in practice but solutions make simplistic assumption. Reinforcement learning is a good fit to these problems and there have been some initial results. However, no standard set of problems or algorithms to compare against exist. We prepare these benchmarks to compare different algorithms and push the community towards developing better ones. 
+
+%\section{Related Work}
+
+\input{bin_packing}
+
+\input{newsvendor}
+
+\input{vrp}
+
+
+\section{Conclusion and Future Work}	
+In this paper, we have established Deep Reinforcement Learning (DRL) benchmarks for three canonical online stochastic optimization problems: Bin Packing, Newsvendor, and Vehicle Routing. We formulated a Markov Decision Process for each problem, and compared established algorithms with vanilla RL techniques. In each case, RL policy either outperforms or is competitive with the baseline. While we do not overcome the NP-hardness of the problems, as wall-clock training time scales with problem size, we find that DRL is a good tool for these problems. % because neural networks are good at state space approximation. 
+These results illustrate the potential value of RL for a wide range of real-world industrial online stochastic problems, from order assignment, to retail buying, to real-time routing. Our experiments indicate the following issues as important for making RL solutions more practical in the future: building effective simulators, learning from historical data, initialization of the RL model, overfitting to a particular distribution and enforcement of constraints (e.g. via action masking). 
+%In addition to addressing the practicality issues above, there are 
+%We identify two major areas for future work. First, 
+We used out-of-the-box RL algorithms, with almost no problem-specific tweaking and simple 2-layer neural networks.  Further research can add value by testing various RL algorithms, neural network structures, etc. and seeing their relative value in each problem especially as complexity scales up.  In this paper we only looked at canonical, theoretical models. Further research should endeavor to apply these RL techniques to real-world industrial problems.  
+
+\clearpage
+
+%\subsubsection*{Acknowledgments}
+
+%Do not include acknowledgments in the anonymized submission, only in the final paper.
+
+\bibliographystyle{icml2019}
+\bibliography{refs}
+
+\clearpage
+
+\input{appendix}
+
+\end{document}

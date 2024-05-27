@@ -1,0 +1,205 @@
+\appendix
+\appendixpage
+\begin{appendices}
+\section{Bin Packing Gym Environment}
+\label{sec:bin_packing_gym}
+
+By default, we set bag capacity to $9$, possible item sizes to $\{2, 3\}$, probabilities of drawing those item sizes to $\{0.5, 0.5\}$ (i.e. Bounded Waste case), and time horizon of $1000$ steps per episode.  We can alter these parameters as we wish to scale the problem difficulty (e.g. bag capacity = 100), but for the description below we walk through the environment set to defaults.  
+
+We represent the state as an array of length $10$.  The first $9$ elements represent the number of bins at a given level of fullness, from level zero to level eight\footnote{we do not explicitly represent full bins, i.e. level 9, in the state -- this is because such information is irrelevant to the policy.  We can however print such information out for graphing, analysis, etc., via the 'info' parameter}.  The 10th element represents the current item size drawn for placement.  
+
+We represent the action space as an array of length $9$.  Each element in the action space array corresponds to placing the current item into a bin at that level of fullness.  The RL policy outputs a vector of equal length to the action space, giving probabilities for each potential action.  We then take the action with the highest probability.  
+
+We deal with infeasible actions (i.e. trying to place an item in a bin-level that does not exist, or trying to place an item in a bin-level that would overflow the bin) via masking -- in particular, we post-process the probability action vector to zero-out any bin-level actions that are infeasible, and then take the action with the highest probability.  Since infeasible actions have probability zero, they are never selected.
+%If the action tries to select a bin-level that strictly does not exist (e.g. trying to select bin-level 30, when capactiy is only 9), we raise an error and terminate training, because this indicates an error in the underlying code translating the neural net output to the action space (i.e. this would be a bug, rather than a bad policy).  
+%For feasible actions (i.e. opening a new bag, or adding the item to an existing open bag), we update the state array accordingly.
+
+%For infeasible actions, we return large negative rewards as described above.  
+For feasible actions, we express the reward at each time step as the incremental waste introduced by the action.  For opening a new bag, the reward is negative, and is equal to $-(B - s_j)$, negative of the bin's residual capacity. 
+%Intuitively, opening a new bag is bad, because doing so produces 7 or 8 waste.  
+For adding an item to an existing bag, the reward is positive, and is equal to the item size.  %Intuitively, adding an item to an existing bag is good, because doing so reduces the waste (or negative space) by exactly the item size.  
+In this formulation, the best total reward we could ever achieve at the end of an episode is 0, meaning that we have packed every bag perfectly full, and there is no waste (or negative space).
+
+To fix ideas, we walk through a hypothetical example for the first three time steps of an episode.
+\[t = 1: \quad \text{State} = [0, 0, 0, 0, 0, 0, 0, 0, 0, 2]\]
+We initialize the state with no empty bags, and take a random draw from the item size distribution.  In this case, we have drawn an item of size 2.
+\[\text{Neural Net Output} = [.2, .4, .1, .6, .8, .5, .4, .2, .9]\]
+\[\text{Masking Array} = [1, 0, 0, 0, 0, 0, 0, 0, 0]\]
+\[\text{Post-Masking Array} = [.2, 0, 0, 0, 0, 0, 0, 0, 0]\]
+\[\text{Action} = [1, 0, 0, 0, 0, 0, 0, 0, 0]\]
+Observe that our neural net output gives probabilities for every action, even though the only feasible action is opening a new bag.  Our masking array multiplies all infeasible elements in the vector by zero, and all feasible elements by 1, producing the post-masking array of probabilities.  ".2" is the highest among probabilities, and so we take the action of opening a new bag.  This produces a negative reward equal to the incremental waste incurred, i.e. $-(9-2) = -7$.
+
+\[t = 2: \quad \text{State} = [0, 0, 1, 0, 0, 0, 0, 0, 0, 3]\]
+Having just placed an item of size 2 in a new bag, our state at the beginning of time 2 shows a single existing bag at bin-level 2.  We take another random draw from the item size distribution.  In this case, we have drawn an item of size 3.
+\[\text{Neural Net Output} = [.5, .1, .8, .9, .9, .2, .3, .2, .1]\]
+\[\text{Masking Array} = [1, 0, 1, 0, 0, 0, 0, 0, 0]\]
+\[\text{Post-Masking Array} = [.5, 0, .8, 0, 0, 0, 0, 0, 0]\]
+\[\text{Action} = [0, 0, 1, 0, 0, 0, 0, 0, 0]\]
+We have two feasible actions -- we can open a new bag, or we can put the item in the existing open bag at bin-level $2$.  In this case, since the probability .8 > .5, and all other actions are infeasible and set to zero, our policy chooses to place the item into the existing bag at bin-level $2$.
+Reward = $3$. Placing an item of size 3 into an existing bag produces a positive reward exactly equal to the item size, since we have incrementally reduced the waste by that amount.
+\[t=3: \quad \text{State} = [0, 0, 0, 0, 0, 1, 0, 0, 0, 3]\]
+Having just placed an item of size 3 in the existing open bag at bin-level 2, we update the array to show an existing open bag at bin-level 5.  We take another draw from the distribution for a new item, and we happen to draw an item of size 3. \\
+{\centering Action = ....Policy to determine}\\
+{\centering Reward = .....Depends on Action}\\
+
+\clearpage
+
+\section{Bin Packing - HyperParameters}
+\label{appendix:bin_size_hp}
+\begin{table}[h!]
+	\resizebox{\columnwidth}{!}
+	{
+		\centering
+		\begin{tabular}{ |c|c|c|c| } 
+			\hline
+			Discount factor & 0.995 & KL coefficient & 1.0 \\
+			\hline
+			Experience Buffer & 320000 & Learning rate & 0.0001 \\
+			\hline	
+			SGD Mini-batch & 32768 & Epochs & 10 \\
+			\hline
+			Entropy coefficient & 0 & \# Workers & 31 \\
+			\hline
+			Episode length & 10000 & clip param & 0.3 \\
+			\hline
+		\end{tabular}
+	}
+	\caption{Hyperparameters used in PPO for Bin Packing}
+	\label{table:bin_packing_hyperparam}
+	\vspace{-1em}
+\end{table}
+\clearpage
+
+\section{Bin Packing Results - Bin Size of 9}
+\label{appendix:bin_size_9}
+
+\begin{table}[!htbp]
+%	\resizebox{\columnwidth}{!}
+	\centering
+		\begin{tabular}{|c|cc|cc|cc|}
+			\hline
+			\multicolumn{1}{|l|}{\multirow{2}{*}{Algorithm}}  & \multicolumn{2}{c|}{Perfect Pack} & \multicolumn{2}{c|}{Bounded Waste}	& \multicolumn{2}{c|}{Linear Waste} \\
+			\multicolumn{1}{|l|}{} 											&   $\mu$            &        $\sigma$		& 	$\mu$    			& 	$\sigma$     		 &     $\mu$        &      $\sigma$          \\ \hline
+			RL with PP  										  			   &  -39.4     		   &          15.1        	&  	-29.0 	  			  &   5.7	 				 &     -106.8       &      70.8     \\ \hline
+			RL with BW  									  				  & -57K     		   &          24K        &  	-5.06 	  			  &   2.77	 				 &     -79K       &      8.5K     \\ \hline
+			RL with LW 										 				  &  -47.1     		  &         7.7               &  	-41.3	  			&   11.8	 			   &     -71.8      &      10     \\ \hline
+			SS  											   						&  -50.2     	    &         28.6           &    -17.27 	  			&   3.21	 			   &     -212.2      &      68.7     \\ \hline
+			Best Fit  															  &  -123.7     	   &          8.3           &  	-127.49 	  			&   9.6	 			   &     -130.6     &      7.7     \\ \hline
+		\end{tabular}
+	\caption{RL and baseline solution comparison for bin packing with bin size of 9 and 1000 items. Mean and standard deviations are calculated across 100 episodes. Note that RL policy trained with BW distribution does not generalize well to PP and LW distribution, giving very negative rewards. Also note that SS outperforms BF for the bin size 9 test case compared to bin size 100.}
+	\label{table:bin_size_9_RL_baseline_comp}
+%	\vspace{-1em}
+\end{table}
+
+\clearpage
+
+\section{Newsvendor - HyperParameters}
+\label{appendix:newsvendor_hp}
+
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{ |c|c| }
+		\hline
+		Learning rate & 0.0001\\
+		\hline
+		SGD Mini-Batch Size & 32768\\
+		\hline
+		Train Batch Size & 320000\\
+		\hline
+		Episode length & 40\\
+		\hline
+		\hline
+	\end{tabular}
+	\caption{Hyperparameters used in PPO for Newsvendor}
+	\label{table:newsvendor_hyperparam}
+	\vspace{-1em}
+\end{table}
+
+\clearpage
+
+\section{VRP baseline MIP formulation}
+\label{appendix:vrp_mip}
+
+\subsubsection*{Sets}
+\begin{vardefs*}
+V & Current vehicle location, $V=\{0\}$ \\
+P & Pickup nodes (copies of the restaurant nodes, associated with the orders that are not in transit)  \\
+D & Delivery nodes representing the orders that are not in transit, $D = \{j | j= i + n, i \in P, n=|P| \}$  \\
+A & Nodes representing the orders that are accepted by the driver; $A \subset D$ \\
+T & Delivery nodes representing the orders that are in transit  \\
+R & Nodes representing the restaurants, used for final return) \\
+N & Set of all nodes in the graph, $N = V \cup P \cup D  \cup T \cup R $\\
+E & Set of all edges, $E=\{(i, j),  \forall i, j \in N\}$
+\end{vardefs*}
+
+
+\subsubsection*{Decision variables}
+\begin{vardefs*}
+ x_{ij} & Binary variable, 1 if the vehicle uses the arc from node $i$ to $j$, 0 otherwise; $i, j \in N$ \\
+y_{i}  & Binary variable, 1 if the order $i$ is accepted, 0 otherwise; $i \in P$\\
+Q_{i} & Auxiliary variable to track the capacity usage as of node  $i$; $i \in N$ \\ 
+B_{i} & Auxiliary variable to track the time as of node  $i$; $i \in N$
+\end{vardefs*}
+
+\subsubsection*{Parameters}
+\begin{vardefs*}
+n & Number of orders available to pick up, $n = |P|$ \\ 
+c_{ij} & Symmetric Manhattan distance (in miles) matrix between node $i$ and $j$, $(i, j) \in E$ \\
+q_i & Supply (demand) at node $i$, $q_0 = |T|; q_i = 1, \forall i \in P;  q_i = -1, \forall i \in D \cup T; q_i = 0 \in R$  \\ 
+l_i & Remaining time to deliver order $i$, $i \in D \cup T$ \\ 
+m & Travel cost per mile \\
+r_i & Revenue for order associated with pick up node $i$, $i \in P$  \\
+U & Vehicle capacity  \\
+M & A very big number  \\ 
+t & Time to travel one mile  \\
+d & A constant positive service time spent on accept, pickup, delivery
+\end{vardefs*}
+
+\subsubsection*{Model}
+\begin{equation}
+\begin{array}{rrclcl}
+& \max_{x, y, Q, B} & \multicolumn{3}{l}{ \sum_{i \in P} r_i y_i - m \sum_{(i,j) \in E} c_{ij} x_{ij}  } \\  
+& \textrm{s.t.} \qquad  \sum_{j \in N} x_{ij}   &=& y_i & \forall i \in P \\   %leave
+& \sum_{j \in N} x_{ij} - \sum_{j \in N} x_{i+n,j}  & = & 0 & \forall i \in P  \\     %pickup
+& y_i & =& 1 & \forall i \in A \\  % accepted
+& \sum_{j \in N} x_{ij}   &=& 1 & \forall i \in V \cup T \\  % start and  in-transit
+& \sum_{i \in N \setminus R } \sum_{j \in R }  x_{ij}   &=& 1  &\\     %end 
+& \sum_{j \in N \setminus R } x_{ji} - \sum_{j \in N} x_{ij}  & = & 0 & \forall i \in P \cup D \cup T  \\     %flow
+& Q_i + q_j - M (1-x_{ij} ) &\leq& Q_j & \forall i,j \in N \\  %captrack
+& \max{(0, q_i)}    &\leq& Q_i & \forall i \in N \\  %cap_lb
+& \min{(U, U+q_i)}    &\geq& Q_i & \forall i \in N \\  %cap_ub
+& B_i + d + c_{ij} t -  M (1-x_{ij} )  &\leq& B_j   & \forall i,j \in N \\  %time_track , *\mathcal{1}\{ i \notin V  \}
+& B_i +  c_{i, i+n} t -  M (1- y_i )  &\leq& B_{i+n}  & \forall i \in P \\ %precedence
+&  d \sum_{i \in P \setminus A}  y_i  & = & B_0  \\ %timetoaccept
+& B_i  &\leq& l_i  & \forall i \in D \cup T \\ %precedence
+& x_{ij}, y_i &\in& \{0, 1\} & \forall i,j \in N  \\ 
+\end{array}
+\end{equation}
+
+\clearpage
+
+\section{Vehicle Routing Problem - HyperParameters}
+\label{appendix:vrp_hp}
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{ |c|c|c|c| } 
+		\hline
+		Replay buffer alpha & 0.5 & \# steps for Q & 3 \\ 
+		\hline
+		Replay buffer eps & 0.1 & Learning rate & 1e-3 \\
+		\hline	
+		Final explore eps & 0.01 & Adam epsilon & 1.5e-4 \\
+		\hline
+		Replay buffer size & 1e6 & \# Workers & 7 \\
+		\hline
+		Episode length & 1000 &  Training Batch & 512 \\
+		\hline
+	\end{tabular}
+	\caption{Hyperparameters used in APEX-DQN for VRP, taken directly from the atari APEX example provided in RLLib. No hand-tuning was performed.}
+	\label{table:vrp_hyperparam}
+	\vspace{-1em}
+\end{table}
+\clearpage
+
+
+\end{appendices}
